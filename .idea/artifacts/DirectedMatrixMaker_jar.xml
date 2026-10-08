@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="DirectedMatrixMaker:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/DirectedMatrixMaker_jar</output-path>
+    <root id="archive" name="DirectedMatrixMaker.jar">
+      <element id="module-output" name="DirectedMatrixMaker" />
+    </root>
+  </artifact>
+</component>
