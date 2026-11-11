@@ -4,6 +4,9 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class RandomEdgeRemover {
+
+    private static final double SECURITY_FACTOR = 1; //It was 5 before, but that lead to complications with the size of the barrierValue and currently we have to keep it as little as possible as we cannot factor down the edges too much
+
     public void removeRandomEdges(String sourceFile, String writingDir, int percentageRemoved){
         removeRandomEdges(Paths.get(sourceFile),Paths.get(writingDir),percentageRemoved);
     }
@@ -36,6 +39,9 @@ public class RandomEdgeRemover {
 
         int graphSize = TSPToolkit.readGraphSize(sourceFile);
 
+        String barrierValue = calcWeakerBarrierValueString(sourceFile,graphSize); //using weaker version to have less of a number explosion
+        System.out.println("Current barrierValue: " + barrierValue);
+
         Random random = new Random((long)graphSize * percentageRemoved);
         double chanceOfRemoval = calcTruePercentage(graphSize,percentageRemoved);
 
@@ -54,7 +60,7 @@ public class RandomEdgeRemover {
             String line;
             while((line = bufferedReader.readLine()) != null) {
 
-                if (Character.isLetter(line.charAt(0))) { //WORKS!
+                if (line.isEmpty() || Character.isLetter(line.charAt(0))) { //WORKS!
                     continue;
                 }
 
@@ -73,7 +79,8 @@ public class RandomEdgeRemover {
 
                     if(!shouldEdgeBeKeptSorted(safeEdges,currentLine,currentColumn)){
                         if(random.nextDouble() < chanceOfRemoval){ //nextdouble is of the form [0,1)
-                            edgeList.set(currentColumn,"999999");
+
+                            edgeList.set(currentColumn,barrierValue);
                         }
                     }
                 }
@@ -198,4 +205,66 @@ public class RandomEdgeRemover {
         return stringBuilder.toString().substring(0,stringBuilder.length()-1);
         //return stringBuilder.toString().substring(0,stringBuilder.length()-2);
     }
+
+    private String calcBarrierValueString(Path sourceFile, int graphSize){ //int should be fine as a datatype as the biggest relevant value is a good amount below int_max
+        double biggestEdgeValue = getBiggestEdge(sourceFile,graphSize);
+
+        int barrierValue = (int) (biggestEdgeValue * graphSize * SECURITY_FACTOR); //intuition is that it should always be more worth to go around the whole graph than to take a barrier as a route
+
+        /* Chose to remove this feature to keep the relationship between edges and barrierValue more stable
+        if(barrierValue<999999){
+            barrierValue = 999999; //this value should never make any problems, so if we can easily afford it, we can raise our value up to it
+        }*/
+
+        return String.valueOf(barrierValue);
+    }
+
+    private String calcWeakerBarrierValueString(Path sourceFile, int graphSize){ //The other calculationmethod was way too big for LKH to handle, so we had to size it down by a lot
+        double biggestEdgeWeight = getBiggestEdge(sourceFile, graphSize);
+
+        int barrierValue = (int) (biggestEdgeWeight * 500);
+        return String.valueOf(barrierValue);
+    }
+
+
+    private double getBiggestEdge(Path sourceFile, int graphSize){
+        try{
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(sourceFile.toString()));
+            String line;
+            int currentLine = 0;
+            double biggestEdge = 0;
+            double smallestEdge = 9999999;
+            while((line = bufferedReader.readLine()) != null) {
+
+                if (line.isEmpty() || Character.isLetter(line.charAt(0))) { //WORKS!
+                    continue;
+                }
+                List<String> edgeList = new ArrayList<>(Arrays.asList(line.split(" ")));
+
+                for(int currentColumn = 0; currentColumn<graphSize;currentColumn++){
+                    double currentValue = Double.valueOf(edgeList.get(currentColumn));
+
+                    if(currentValue > biggestEdge && currentLine!=currentColumn){
+                        biggestEdge = currentValue;
+                    }
+                    if(currentValue < smallestEdge){
+                        smallestEdge = currentValue;
+                    }
+                }
+                currentLine++;
+            }
+            //System.out.println("Biggest edge value is: " + biggestEdge);
+            System.out.println("Smallest edge value is: " + smallestEdge);
+
+
+
+            return biggestEdge;
+        }catch (IOException e){
+            e.printStackTrace();
+            System.exit(0);
+        }
+        return 0;
+    }
+
+
 }

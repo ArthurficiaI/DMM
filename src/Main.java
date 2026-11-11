@@ -11,19 +11,19 @@ public class Main {
             String modeArg = args[0];
 
             switch(modeArg){
-                case "convertAndParam":
+                case "convertAndParam": //tested
                     atspController.convertAndWriteParams(args[1], args[2], args[3], args[4]); //String problemPath,  String newATSPProblem, String writeNewParamPath, String LKHPath
                     break;
 
-                case "convert":
+                case "convert": //tested
                     atspController.convertTSPtoATSP(args[1],args[2]);  //String problemPath,  String writeNewProblemPath
                     break;
 
-                case "convertDir":
+                case "convertDir": //tested
                     atspController.convertTSPDirToATSPDir(args[1],args[2]); //String sourceDir, String atspDir
                     break;
 
-                case "convertDirAndParam":
+                case "convertDirAndParam": //tested
                     atspController.convertTSPDirToATSPDirWithParams(args[1], args[2], args[3], args[4]); //String sourceDir, String atspDir, String writeNewParamPath, String LKHPath
                     break;
 
@@ -35,29 +35,50 @@ public class Main {
                     atspController.specificParamsDir(args[1], args[2], args[3], args[4]);
                     break;
 
-                case "param":
+                case "param": //tested
                     atspController.writeParams(args[1],args[2],args[3]); //String atspProblemPath, String writeNewParamPath, String LKHPath
                     break;
 
-                case "paramFromDir":
+                case "paramFromDir": //tested
                     atspController.writeParamsFromDir(args[1], args[2], args[3]); //String atspProblemDir, String writeNewParamPath, String LKHPath
                     break;
 
-                case "reduceNodes":
+                case "reduceNodes": //tested
                     atspController.reduceNodesOnce(args[1], args[2], args[3]); //String sourcePath, String writingDir, String numberOfDeletionsString
                     break;
 
-                case "reduceNodesInSteps":
+                case "reduceNodesInSteps": //tested
                     atspController.reduceNodesInSteps(args[1], args[2], args[3]); //String sourcePath, String writingDir, String stepSizeString
                     break;
 
-                case "reduceEdges":
+                case "reduceEdges": //tested
                     atspController.reduceEdgesOnce(args[1],args[2],args[3]); //String sourcePath, String writingDir, String deletionPercentage
                     break;
 
-                case "reduceEdgesInDir":
+                case "reduceEdgesInDir": //tested
                     atspController.reduceEdgesInDir(args[1], args[2], args[3]); //String sourceDir, String writingDir, String deletionPercentage
                     break;
+
+                case "scaleMatrixDown": //tested
+                    atspController.scaleMatrixDown(args[1],args[2],args[3]); //String problemPath, String writingDirPath, String factor
+                    break;
+
+                case "scaleMatrixUp": //tested
+                    atspController.scaleMatrixUp(args[1], args[2], args[3]); //String problemPath, String writingDirPath, String factor
+                    break;
+
+                case "writeParamsGivenSeedAndTourPath"://tested
+                    atspController.writeParamsGivenSeedAndTourPath(args[1], args[2], args[3], args[4], args[5]);
+                    break;
+
+                case "roundWeightsDown": //tested
+                    if(args.length>2){
+                        atspController.roundMatrix(args[1],args[2]);
+                    } else{
+                        atspController.roundMatrix(args[1]);
+                    }
+                    break;
+
 
                 default:
                     printExplainingMessage();
@@ -67,6 +88,48 @@ public class Main {
         }catch (ArrayIndexOutOfBoundsException e){
             printExplainingMessage();
         }
+
+        String fna52057 = "C:\\Users\\dafwe\\OneDrive\\Desktop\\Unistuff\\Master\\Masterarbeit\\experiments\\testingHighest\\asymsynth_52057_bigger_rounded.atsp";
+        String atspDir = "C:\\Users\\dafwe\\OneDrive\\Desktop\\Unistuff\\Master\\Masterarbeit\\experiments\\testingHighest\\";
+
+        atspController.reduceEdgesOnce(fna52057,atspDir,"20");
+
+/*
+        String fna52057 = "C:\\Users\\dafwe\\OneDrive\\Desktop\\Unistuff\\Master\\Masterarbeit\\experiments\\testingHighest\\asymsynth_52057_bigger.atsp";
+        String asymsynth_237 = "C:\\Users\\dafwe\\OneDrive\\Desktop\\Unistuff\\Master\\Masterarbeit\\experiments\\Rounding\\atsp\\asymsynth_237.atsp";
+        String atspDir = "C:\\Users\\dafwe\\OneDrive\\Desktop\\Unistuff\\Master\\Masterarbeit\\experiments\\Rounding\\atsp";
+        atspController.roundMatrix(asymsynth_237, atspDir);
+        atspController.roundMatrix(fna52057);
+
+ */
+
+        /*
+        String atspFile = "C:\\Users\\dafwe\\OneDrive\\Desktop\\Unistuff\\Master\\Masterarbeit\\experiments\\seedAndTOur\\ATSP\\asymsynth_237.atsp";
+        String atspDir = "C:\\Users\\dafwe\\OneDrive\\Desktop\\Unistuff\\Master\\Masterarbeit\\experiments\\seedAndTOur\\ATSP";
+        String paramDest = "C:\\Users\\dafwe\\OneDrive\\Desktop\\Unistuff\\Master\\Masterarbeit\\experiments\\seedAndTOur\\Params";
+        String LKHDir = "C:\\Users\\dafwe\\OneDrive\\Desktop\\Unistuff\\Master\\Masterarbeit\\experiments\\seedAndTOur";
+        String tourDest = "C:\\Users\\dafwe\\OneDrive\\Desktop\\Unistuff\\Master\\Masterarbeit\\experiments\\seedAndTOur\\Tours";
+
+        String fna52057 = "C:\\Users\\dafwe\\OneDrive\\Desktop\\Unistuff\\Master\\Masterarbeit\\experiments\\testingHighest\\asymsynth_52057.atsp";
+        String bigDir = "C:\\Users\\dafwe\\OneDrive\\Desktop\\Unistuff\\Master\\Masterarbeit\\experiments\\testingHighest";
+
+
+        atspController.writeParamsGivenSeedAndTourPath(paramDest,atspFile,LKHDir,"65",tourDest);
+
+        atspController.scaleMatrixUp(atspFile, atspDir,"5");
+        atspController.scaleMatrixDown(atspFile,atspDir,"5");
+
+        atspController.scaleMatrixUp(fna52057,bigDir,"5");
+        */
+
+
+        /*
+        String smolExpATSP = "C:\\Users\\dafwe\\OneDrive\\Desktop\\Unistuff\\Master\\Masterarbeit\\experiments\\RemovingEdges\\SmolExperiment\\asymsynth_10.atsp";
+        RandomEdgeRemover randomEdgeRemover = new RandomEdgeRemover();
+        //randomEdgeRemover.getBiggestEdge(Paths.get(smolExpATSP),10);
+
+        String fna52057 = "C:\\Users\\dafwe\\OneDrive\\Desktop\\Unistuff\\Master\\Masterarbeit\\experiments\\testingHighest\\asymsynth_52057.atsp";
+        randomEdgeRemover.removeRandomEdges(fna52057,"C:\\Users\\dafwe\\OneDrive\\Desktop\\Unistuff\\Master\\Masterarbeit\\experiments\\testingHighest\\",0);*/
 
 /*
         String bigATSP10000 = "C:\\Users\\dafwe\\OneDrive\\Desktop\\Unistuff\\Master\\Masterarbeit\\experiments\\RemovingEdges\\BigExperiment\\BIG_ATSP\\asymsynth_10150.atsp";
@@ -153,6 +216,9 @@ public class Main {
                 "reduceNodes (String sourcePath, String writingDir, String numberOfDeletionsString)\n" +
                 "reduceNodesInSteps (String sourcePath, String writingDir, String stepSizeString)\n" +
                 "reduceEdges(String sourcePath, String writingDir, String deletionPercentageInt)\n" +
-                "reduceEdgesInDir(String sourceDir, String writingDir, String deletionPercentageInt)");
+                "reduceEdgesInDir(String sourceDir, String writingDir, String deletionPercentageInt)\n" +
+                "scaleMatrixDown(String problemPath, String writingDirPath, String factor)\n" +
+                "scaleMatrixUp(String problemPath, String writingDirPath, String factor)\n" +
+                "writeParamsGivenSeedAndTourPath(String writeNewParamPath, String atspProblemPath, String LKHPath, String seed, String writeTourPath)");
     }
 }

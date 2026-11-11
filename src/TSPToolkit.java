@@ -1,8 +1,6 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TSPToolkit {
@@ -151,13 +149,117 @@ public class TSPToolkit {
         for(String number : stringList){
             stringBuilder.append(number).append(" ");
         }
-        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+        if(!stringBuilder.isEmpty()){
+            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+        }
+
 
 
         bufferedWriter.newLine();
         bufferedWriter.write(stringBuilder.toString());
 
     }
+
+    public static void scaleMatrix(Path problemPath, Path writingDirPath, double dividingFactor){
+        try{
+            String problemPathString = problemPath.toString();
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(problemPathString));
+
+            String fileSuffix = "_smaller.atsp";
+            if(dividingFactor < 1){
+                fileSuffix = "_bigger.atsp";
+            }
+
+            String writeFileName = problemPathString.replace(".atsp",fileSuffix);
+            Path writeFilePath = writingDirPath.resolve(writeFileName);
+
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(writeFilePath.toString()));
+
+            int edgeAmountSetToOne = 0;
+
+            String line;
+            while((line = bufferedReader.readLine()) != null){
+                if (Character.isLetter(line.charAt(0))) { //WORKS!
+                    bufferedWriter.write(line); bufferedWriter.newLine();
+                    continue;
+                }
+                String[] edgeRow = line.split(" ");
+                List<String> newEdgeRow = new ArrayList<>();
+                for(String edgeString : edgeRow){
+                    if(edgeString.length() > 0){
+                        double edge = Double.valueOf(edgeString);
+                        edge = edge/dividingFactor;
+
+                        if(edge < 1){ //anything below 1 gets interpreted as a 0 by LKH, so we make sure that the smallest edges have a value of 1
+                            edgeAmountSetToOne++;
+                            edge = 1;
+                        }
+
+                        newEdgeRow.add(String.valueOf(edge));
+                    }
+                }
+                writeLineWithNewNumbers(newEdgeRow, bufferedWriter);
+            }
+
+            System.out.println(edgeAmountSetToOne + "edges were set to one");
+
+            bufferedWriter.close();
+            bufferedReader.close();
+
+        }catch (IOException e){
+            e.printStackTrace();
+            System.exit(0);
+        }
+    }
+
+    public static void roundMatrix(Path problemPath, Path writingDirPath){ //this exists to circumvent rounding differences from different programs
+        try{
+            String problemPathString = problemPath.toString();
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(problemPathString));
+
+            String fileSuffix = "_rounded.atsp";
+
+            String writeFileName = problemPathString.replace(".atsp",fileSuffix);
+            Path writeFilePath = writingDirPath.resolve(writeFileName);
+
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(writeFilePath.toString()));
+
+            int edgeAmountSetToOne = 0;
+
+            String line;
+            while((line = bufferedReader.readLine()) != null){
+                if (line.isEmpty() || Character.isLetter(line.charAt(0))) { //WORKS!
+                    bufferedWriter.write(line); bufferedWriter.newLine();
+                    continue;
+                }
+                String[] edgeRow = line.split(" ");
+                List<String> newEdgeRow = new ArrayList<>();
+                for(String edgeString : edgeRow){
+                    if(edgeString.length() > 0){
+                        int edge = Double.valueOf(edgeString).intValue(); //truncates, so it rounds down
+
+                        if(edge < 1){ //anything below 1 gets interpreted as a 0 by LKH, so we make sure that the smallest edges have a value of 1
+                            edgeAmountSetToOne++;
+                            edge = 1;
+                        }
+
+                        newEdgeRow.add(String.valueOf(edge));
+                    }
+                }
+                writeLineWithNewNumbers(newEdgeRow, bufferedWriter);
+            }
+
+            System.out.println(edgeAmountSetToOne + "edges were set to one");
+
+            bufferedWriter.close();
+            bufferedReader.close();
+
+        }catch (IOException e){
+            e.printStackTrace();
+            System.exit(0);
+        }
+    }
+
 
     //public static void write
 

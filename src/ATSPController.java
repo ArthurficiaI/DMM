@@ -21,6 +21,11 @@ public class ATSPController {
         paramfileWriter.writeATSPParamFile(writeNewParamPath,atspProblemPath,LKHPath);
     }
 
+    public void writeParamsGivenSeedAndTourPath(String writeNewParamPath, String atspProblemPath, String LKHPath, String seed, String writeTourPath){
+        ParamfileWriter paramfileWriter = new ParamfileWriter();
+        paramfileWriter.writeATSPParamFileWithSeedAndTourPath(writeNewParamPath,atspProblemPath,LKHPath,seed,writeTourPath);
+    }
+
     public void writeParamsFromDir(String atspProblemDir, String writeNewParamPath, String LKHPath){
         ParamfileWriter paramfileWriter = new ParamfileWriter();
         paramfileWriter.writeATSPParamFilesFromDir(writeNewParamPath,atspProblemDir,LKHPath);
@@ -111,5 +116,24 @@ public class ATSPController {
 
         RandomEdgeRemover randomEdgeRemover = new RandomEdgeRemover();
         randomEdgeRemover.removeRandomEdgesFromWholeDirectory(sourceDir,writingDir,deletionPercentageInt);
+    }
+
+    public void scaleMatrixDown(String problemPath, String writingDirPath, String factor){
+        TSPToolkit.scaleMatrix(Paths.get(problemPath), Paths.get(writingDirPath),Double.valueOf(factor));
+    }
+
+    public void scaleMatrixUp(String problemPath, String writingDirPath, String factor){
+        TSPToolkit.scaleMatrix(Paths.get(problemPath),Paths.get(writingDirPath), 1/Double.valueOf(factor));
+    }
+
+    public void roundMatrix(String problemPath, String writingDirPath){
+        TSPToolkit.roundMatrix(Paths.get(problemPath),Paths.get(writingDirPath));
+    }
+
+    public void roundMatrix(String problemPath){
+        Path problemPathPath = Paths.get(problemPath);
+        Path writingDirPath = problemPathPath.subpath(0,problemPathPath.getNameCount()-1);
+
+        roundMatrix(problemPath, writingDirPath.toString());
     }
 }

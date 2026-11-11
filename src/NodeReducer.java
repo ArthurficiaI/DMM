@@ -48,7 +48,7 @@ public class NodeReducer {
             while((line = bufferedReader.readLine()) != null){ //we want to delete all columns and rows in the given matrix.
 
 
-                if(Character.isLetter(line.charAt(0))){ //WORKS!
+                if(line.isEmpty() || Character.isLetter(line.charAt(0))){ //WORKS!
                     continue;
                 }
 
